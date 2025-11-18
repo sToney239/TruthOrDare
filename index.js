@@ -62,7 +62,7 @@ const challenge = {
         "做桌上一个人的宠物5分钟。",
         "尝试跳霹雳舞30秒。",
         "把你脑海中第一个想到的句子大喊出来。",
-        "闻闻房间里每个人的腋下。",
+        /// "闻闻房间里每个人的腋下。",
         "苦苦哀求你右边的人不要离开你去找ta的男/女友。",
         "勾引群体中同性成员。",
         "闭上眼睛，给随机一个人发条随机的信息。",
@@ -72,7 +72,7 @@ const challenge = {
         "凝视桌上一个异性的眼睛30秒。",
         "伴着快歌跳慢舞。",
         "像袋鼠一样跳整个房间一圈或者1分钟。",
-        "给你的crush发短信，告诉ta你的脚通常闻起来像烂番茄，问问ta是否能忍受。",
+        /// "给你的crush发短信，告诉ta你的脚通常闻起来像烂番茄，问问ta是否能忍受。",
         "连喝3杯水。",
         "告诉你的女/男朋友，你的朋友们不喜欢她/他，所以你不能再和她/他在一起了。"
     ]
@@ -85,9 +85,11 @@ function getNewTask(truthOrDare) {
     if(truthOrDare === 'truth') {
         document.getElementById('taskArea').innerHTML = challenge.truth[Math.floor(Math.random() * challenge.truth.length)];
         document.getElementById('taskType').innerHTML = '真心话'
+		document.getElementById('taskType').style.background = '#9bdfffff'
     } else {
         document.getElementById('taskArea').innerHTML = challenge.dare[Math.floor(Math.random() * challenge.dare.length)];        
         document.getElementById('taskType').innerHTML = '大冒险'
+		document.getElementById('taskType').style.background = '#ffc7a2ff'
     }
-    document.getElementById('taskType').style.background = '#C7ECC8'
+    
 }
