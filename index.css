@@ -6,14 +6,15 @@ body {
 }
 
 #taskType {
+	font-weight: 700;
     font-family: din-round,sans-serif;
     width: 40%;
-    font-size: 4vh;
+    font-size: 3vh;
     font-family: din-round,sans-serif;
     height: 5vh;
     margin: 3% auto auto;
     display: flex;
-    color: black;
+    color: #323743;
     box-sizing: border-box;
     border-radius: 5vh;
     align-items: center;
