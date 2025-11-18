@@ -284,10 +284,12 @@ function getNewTask(truthOrDare) {
         document.getElementById('taskArea').innerHTML = challenge.truth[Math.floor(Math.random() * challenge.truth.length)];
         document.getElementById('taskType').innerHTML = '真心话'
         document.getElementById('taskType').style.background = '#9bdfffff'
+		document.getElementById('taskType').style.boxShadow = '0px 2px 0px #838383'
     } else {
         document.getElementById('taskArea').innerHTML = challenge.dare[Math.floor(Math.random() * challenge.dare.length)];
         document.getElementById('taskType').innerHTML = '大冒险'
         document.getElementById('taskType').style.background = '#ffc7a2ff'
+		document.getElementById('taskType').style.boxShadow = '0px 2px 0px #838383'
     }
 
 }
