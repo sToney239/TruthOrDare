@@ -79,6 +79,9 @@ const challenge = {
 };
 
 function getNewTask(truthOrDare) {
+    if(truthOrDare === 'random') {
+    truthOrDare = ['truth','dare'][Math.floor(Math.random() * 2)];
+    }
     if(truthOrDare === 'truth') {
         document.getElementById('taskArea').innerHTML = challenge.truth[Math.floor(Math.random() * challenge.truth.length)];
         document.getElementById('taskType').innerHTML = '真心话'

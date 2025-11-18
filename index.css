@@ -33,18 +33,25 @@ body {
 
 #navigation {
     width: 100%;
-    height: 55vh;
+    height: 20vh;
     display: flex;
     box-sizing: border-box;
 }
-
+#navigation2 {
+    width: 100%;
+    height: 20vh;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    box-sizing: border-box;
+}
 button {
     border-radius: 5vh;
     -webkit-border-radius: 5vh;
     -moz-border-radius: 5vh;
     background: linear-gradient(rgba(54, 59, 217, 0.709),  rgb(50, 56, 202));
     width: 40%;
-    height: 20%;
+    height: 80%;
     font-size: 4vh;
     box-shadow: 0 2vh 3vh rgba(0, 0, 0, 0.2);
 }
@@ -55,14 +62,20 @@ button:hover {
 }
 
 #truth {
-    margin-top: 15vh;
+    margin-top: 3vh;
     margin-left: auto;
     margin-right: auto;
     border: 0.3vh solid green;
 }
 
 #dare {
-    margin-top: 15vh;
+    margin-top: 3vh;
+    margin-left: auto;
+    margin-right: auto;
+    border: 0.3vh solid red;
+}
+#random {
+    margin-top: 3vh;
     margin-left: auto;
     margin-right: auto;
     border: 0.3vh solid red;
