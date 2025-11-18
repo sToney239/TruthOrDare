@@ -7,7 +7,7 @@ body {
 
 #taskType {
     font-family: din-round,sans-serif;
-    width: 20%;
+    width: 40%;
     font-size: 4vh;
     font-family: din-round,sans-serif;
     height: 5vh;
@@ -65,7 +65,8 @@ button {
     margin-right: auto;
 }
 .button-19 {
-  appearance: button;
+  appearance: none;
+  -webkit-appearance: none; 
   background-color: #838383;
   border: solid transparent;
   border-radius: 16px;
@@ -112,6 +113,7 @@ button {
 .button-19,
 .button-19:focus {
   user-select: auto;
+  outline: none;
 }
 
 .button-19:hover:not(:disabled) {
