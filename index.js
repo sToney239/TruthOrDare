@@ -7,7 +7,7 @@ const challenge = {
         "如果你能回到过去抹去你说过或做过的一件事，你会抹去什么？",
         "如果你能突然隐身，你会怎么做？",
         "你有没有“假装喜欢但实际上并不喜欢”的人？",
-        "你有没有吃过地上的东西？",
+        "你有没有吃过掉在地上的东西？",
         "你的初吻对象是谁？你喜欢吗？",
         "如果你能和名人约会，你会选谁？",
         "你梦想中的职业是什么？",
@@ -89,5 +89,5 @@ function getNewTask(truthOrDare) {
         document.getElementById('taskArea').innerHTML = challenge.dare[Math.floor(Math.random() * challenge.dare.length)];        
         document.getElementById('taskType').innerHTML = '大冒险'
     }
-    
+    document.getElementById('taskType').style.background = '#C7ECC8'
 }
