@@ -1,38 +1,704 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="index.css">
-    <script src="index.js"></script>
     <link rel="manifest" href="manifest.json">
+	<script src="question.js"></script>
     <title>真心话大冒险生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f8ff;
+            font-family: din-round, sans-serif;
+            margin: 0;
+            overflow: hidden;
+            min-height: 100vh;
+        }
+
+        /* 真心话大冒险页面样式 */
+        .page {
+            display: none;
+            min-height: 100vh;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
+        #taskType {
+            font-weight: 700;
+            font-family: din-round, sans-serif;
+            width: 40%;
+            font-size: 4vh;
+            font-family: din-round, sans-serif;
+            height: 8vh;
+            margin: 3% auto auto;
+            display: flex;
+            color: #2c5aa0;
+            box-sizing: border-box;
+            border-radius: 5vh;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #taskArea {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 5% auto auto;
+            width: 85%;
+            height: 55vh;
+            padding: 10px;
+            border-radius: 5vh;
+            -webkit-border-radius: 5vh;
+            -moz-border-radius: 5vh;
+            color: white;
+            font-size: 4vh;
+            background: #323743;
+            box-shadow: 0px 3px 0px #838383;
+        }
+
+        #navigation {
+            width: 100%;
+            height: 15vh;
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        button {
+            -webkit-tap-highlight-color: transparent;
+            width: 30%;
+            height: 70%;
+            font-size: 4vh;
+        }
+
+        #truth {
+            margin-top: 3vh;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #dare {
+            margin-top: 3vh;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #random {
+            margin-top: 3vh;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .button-19 {
+            appearance: none;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-appearance: none;
+            background-color: #838383;
+            border: solid transparent;
+            border-radius: 16px;
+            border-width: 0 0 4px;
+            box-sizing: border-box;
+            color: #FFFFFF;
+            cursor: pointer;
+            display: inline-block;
+            font-family: din-round, sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: .8px;
+            line-height: 20px;
+            margin: 0;
+            outline: none;
+            overflow: visible;
+            padding: 13px 16px;
+            text-align: center;
+            text-transform: uppercase;
+            touch-action: manipulation;
+            transform: translateZ(0);
+            transition: filter .2s;
+            user-select: none;
+            -webkit-user-select: none;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .button-19:after {
+            background-clip: padding-box;
+            border: solid transparent;
+            border-radius: 16px;
+            border-width: 0 0 4px;
+            bottom: -4px;
+            content: "";
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            z-index: -1;
+        }
+
+        .button-19,
+        .button-19:focus {
+            user-select: auto;
+            outline: none;
+        }
+
+        .button-19:hover:not(:disabled) {
+            filter: brightness(1.1);
+            -webkit-filter: brightness(1.1);
+        }
+
+        .button-19:disabled {
+            cursor: auto;
+        }
+
+        .button-19:active {
+            border-width: 4px 0 0;
+            background: none;
+        }
+
+        #truth.button-19:after {
+            background-color: #1CB0F6;
+            background-clip: padding-box;
+            border: solid transparent;
+            border-radius: 16px;
+            border-width: 0 0 4px;
+            bottom: -4px;
+            content: "";
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            z-index: -1;
+        }
+
+        #dare.button-19:after {
+            background-color: #fa6400;
+            background-clip: padding-box;
+            border: solid transparent;
+            border-radius: 16px;
+            border-width: 0 0 4px;
+            bottom: -4px;
+            content: "";
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            z-index: -1;
+        }
+
+        #random.button-19:after {
+            background-color: #2EA44F;
+            background-clip: padding-box;
+            border: solid transparent;
+            border-radius: 16px;
+            border-width: 0 0 4px;
+            bottom: -4px;
+            content: "";
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            z-index: -1;
+        }
+
+        /* 转盘页面样式 */
+        .container {
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #2c5aa0;
+            margin-bottom: 40px;
+            font-size: 4vh;
+            font-weight: 700;
+            font-family: din-round, sans-serif;
+        }
+
+        .pointer-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 40px;
+        }
+
+        .pointer {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 130px solid #e74c3c;
+            left: 50%;
+            top: 10px;
+            transform-origin: center 130px;
+            transform: translateX(-50%) rotate(0deg);
+            transition: none;
+            will-change: transform;
+        }
+
+        .pointer-center {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #c0392b;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .power-meter {
+            width: 100%;
+            height: 12px;
+            background: #95a5a6;
+            border-radius: 6px;
+            margin: 0 auto 30px;
+            overflow: hidden;
+            box-shadow: 0px 3px 0px #7f8c8d;
+        }
+
+        .power-fill {
+            height: 100%;
+            width: 0%;
+            background: #3498db;
+            border-radius: 6px;
+            transition: width 0.05s linear;
+        }
+
+        .charge-button {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-appearance: none;
+            background-color: #27ae60;
+            color: #FFFFFF;
+            font-family: din-round, sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            position: relative;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            width: 160px;
+            max-width: 200px;
+            height: 60px;
+            box-shadow: 0px 3px 0px #838383;
+        }
+
+        .charge-button:after {
+            background-clip: padding-box;
+            background-color: #229954;
+            border: 0 solid transparent;
+            border-bottom-width: 4px;
+            border-radius: 12px;
+            bottom: -4px;
+            content: "";
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            z-index: -1;
+        }
+
+        .charge-button:focus {
+            outline: 0;
+        }
+
+        .charge-button:hover:not(:disabled) {
+            outline: 0;
+        }
+
+        .charge-button:disabled {
+            cursor: default;
+        }
+
+        .charge-button:active {
+            background: none;
+            transform: translateY(3px);
+            box-shadow: 0px 0px 0px #229954;
+        }
+
+        .charge-button.charging:active {
+            transform: translateY(3px);
+            box-shadow: 0px 0px 0px #229954;
+        }
+
+        .charge-button.charging:after {
+            background-color: #e67e22;
+        }
+
+        .spinning {
+            animation: spin linear;
+        }
+
+        @keyframes spin {
+            from {
+                transform: translateX(-50%) rotate(0deg);
+            }
+
+            to {
+                transform: translateX(-50%) rotate(360deg);
+            }
+        }
+
+        .instructions {
+            color: #2c5aa0;
+            margin-top: 30px;
+            font-size: 3vh;
+            font-family: din-round, sans-serif;
+            font-weight: 700;
+        }
+
+        /* 导航按钮样式 */
+        .navigation-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-button {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-appearance: none;
+            background-color: #F3A934;
+            color: #FFFFFF;
+            font-family: din-round, sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0px 3px 0px #838383;
+            white-space: nowrap;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .nav-button:hover {
+            background-color: #F3A934;
+        }
+
+        .nav-button:active {
+            transform: translateY(3px);
+            box-shadow: 0px 0px 0px #F3A934;
+        }
+    </style>
 </head>
 
 <body>
+    <!-- 导航按钮 -->
+    <div class="navigation-button">
+        <button id="navToggle" class="nav-button">
+            转盘
+        </button>
+    </div>
 
+    <!-- 真心话大冒险页面 -->
+    <div id="truthOrDarePage" class="page active">
+        <div id="taskType"></div>
+        <div id="taskArea" class="shadow">
+            请选择
+        </div>
+        <div id="navigation">
+            <button onclick="getNewTask('truth')" id="truth" class="button-19">真心话</button>
+            <button onclick="getNewTask('random')" id="random" class="button-19">随机</button>
+            <button onclick="getNewTask('dare')" id="dare" class="button-19">大冒险</button>
+        </div>
+    </div>
+
+    <!-- 转盘页面 -->
+    <div id="pointerPage" class="page">
+        <div class="container">
+            <h1>转盘</h1>
+
+            <div class="pointer-container">
+                <div class="pointer" id="pointer"></div>
+                <div class="pointer-center"></div>
+            </div>
+
+            <div class="power-meter">
+                <div class="power-fill" id="powerFill"></div>
+            </div>
+
+            <button class="charge-button" id="chargeButton">
+                请按下
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 页面切换功能
+        const navToggle = document.getElementById('navToggle');
+        const truthOrDarePage = document.getElementById('truthOrDarePage');
+        const pointerPage = document.getElementById('pointerPage');
+        let currentPage = 'truthOrDare';
+
+        function showTruthOrDarePage() {
+            pointerPage.classList.remove('active');
+            truthOrDarePage.classList.add('active');
+            navToggle.textContent = '转盘';
+            currentPage = 'truthOrDare';
+        }
+
+        function showPointerPage() {
+            truthOrDarePage.classList.remove('active');
+            pointerPage.classList.add('active');
+            navToggle.textContent = '真心话大冒险';
+            currentPage = 'pointer';
+        }
+
+        navToggle.addEventListener('click', () => {
+            if (currentPage === 'truthOrDare') {
+                showPointerPage();
+            } else {
+                showTruthOrDarePage();
+            }
+        });
+
+        // 真心话大冒险功能
+        
+
+        function getNewTask(truthOrDare) {
+            if (truthOrDare === 'random') {
+                truthOrDare = ['truth', 'dare'][Math.floor(Math.random() * 2)];
+            }
+            if (truthOrDare === 'truth') {
+                document.getElementById('taskArea').innerHTML = challenge.truth[Math.floor(Math.random() * challenge.truth.length)];
+                document.getElementById('taskType').innerHTML = '真心话'
+                // document.getElementById('taskType').style.background = '#9bdfffff'
+                // document.getElementById('taskType').style.boxShadow = '0px 2px 0px #838383'
+            } else {
+                document.getElementById('taskArea').innerHTML = challenge.dare[Math.floor(Math.random() * challenge.dare.length)];
+                document.getElementById('taskType').innerHTML = '大冒险'
+                // document.getElementById('taskType').style.background = '#ffc7a2ff'
+                // document.getElementById('taskType').style.boxShadow = '0px 2px 0px #838383'
+            }
+
+        }
+
+        // 转盘功能
+        class PointerGame {
+            constructor() {
+                this.pointer = document.getElementById('pointer');
+                this.chargeButton = document.getElementById('chargeButton');
+                this.powerFill = document.getElementById('powerFill');
+
+                this.isCharging = false;
+                this.isSpinning = false;
+                this.power = 0;
+                this.chargeStartTime = 0;
+                this.animationFrame = null;
+                this.chargePhase = 0;
+                this.currentRotation = 0; // 跟踪当前旋转角度
+
+                this.init();
+            }
+
+            init() {
+                // 鼠标事件
+                this.chargeButton.addEventListener('mousedown', () => this.startCharging());
+                this.chargeButton.addEventListener('mouseup', () => this.stopCharging());
+                this.chargeButton.addEventListener('mouseleave', () => this.stopCharging());
+
+                // 触摸事件
+                this.chargeButton.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    this.startCharging();
+                });
+                this.chargeButton.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    this.stopCharging();
+                });
+                this.chargeButton.addEventListener('touchcancel', (e) => {
+                    e.preventDefault();
+                    this.stopCharging();
+                });
+            }
+
+            startCharging() {
+                if (this.isCharging || this.isSpinning) return;
+
+                this.isCharging = true;
+                this.chargeStartTime = Date.now();
+                this.chargePhase = 0;
+                this.chargeButton.classList.add('charging');
+                this.chargeButton.textContent = '松开旋转...';
+
+                this.updatePower();
+            }
+
+            stopCharging() {
+                if (!this.isCharging) return;
+
+                this.isCharging = false;
+                this.chargeButton.classList.remove('charging');
+                this.chargeButton.textContent = '请按下';
+
+                if (this.animationFrame) {
+                    cancelAnimationFrame(this.animationFrame);
+                    this.animationFrame = null;
+                }
+
+                this.spin();
+            }
+
+            updatePower() {
+                if (!this.isCharging) return;
+
+                const elapsed = Date.now() - this.chargeStartTime;
+
+                // 周期性变化：最小->最大->最小->最大...（调整周期让蓄力速度适中）
+                const cycleTime = 3000; // 3秒一个完整周期（之前4秒）
+                const phase = (elapsed % cycleTime) / cycleTime;
+
+                // 使用更平滑的正弦函数创建周期性变化
+                // 完整的正弦波，自然地从0到100再到0
+                const power = (Math.sin(phase * 2 * Math.PI - Math.PI / 2) + 1) * 50;
+
+                this.power = Math.max(0, Math.min(100, power));
+
+                // 更新UI - 使用更平滑的过渡
+                this.powerFill.style.width = this.power + '%';
+
+                this.animationFrame = requestAnimationFrame(() => this.updatePower());
+            }
+
+            calculateSpinSpeed() {
+                // 根据蓄力值计算旋转速度（秒）- 调整速度范围以提升平滑度
+                // 蓄力值越高，旋转越快（时间越短）
+                const minSpeed = 1.5; // 最慢1.5秒一圈
+                const maxSpeed = 0.3; // 最快0.3秒一圈（调慢以提升平滑度）
+
+                return minSpeed - (this.power / 100) * (minSpeed - maxSpeed);
+            }
+
+            calculateDeceleration() {
+                // 根据蓄力值计算减速时间
+                return 0.5 + (this.power / 100) * 1; // 0.5-1.5秒减速
+            }
+
+            spin() {
+                if (this.power === 0) return;
+
+                this.isSpinning = true;
+                const spinSpeed = this.calculateSpinSpeed();
+                const decelerationTime = this.calculateDeceleration();
+
+                // 计算总旋转角度（基于蓄力值）
+                const baseRotation = 360 + (this.power / 100) * 720; // 360-1080度
+
+                // 根据基础旋转角度按比例缩放随机角度
+                // 基础旋转越大，随机角度越大；基础旋转越小，随机角度越小
+                const randomRatio = (baseRotation - 360) / 720; // 0-1的比例
+                const maxRandomAngle = 5 + randomRatio * 15; // 5-20度范围
+                const randomRotation = Math.random() * maxRandomAngle;
+                const finalRotation = baseRotation + randomRotation;
+
+                // 创建旋转动画
+                this.createSpinAnimation(finalRotation, spinSpeed, decelerationTime);
+            }
+
+            createSpinAnimation(finalRotation, spinSpeed, decelerationTime) {
+                const startRotation = this.currentRotation;
+                const targetRotation = startRotation + finalRotation;
+
+                // 完全使用CSS动画，避免JavaScript计算的突兀感
+                this.pointer.style.willChange = 'transform';
+
+                // 根据初速度选择合适的缓动函数
+                // 低速使用更平缓的缓动，高速使用更直接的缓动
+                let easingFunction;
+                if (spinSpeed > 1.0) {
+                    // 低速：非常平缓的开始，避免突兀
+                    easingFunction = 'cubic-bezier(0.1, 0.1, 0.2, 1)';
+                } else if (spinSpeed > 0.6) {
+                    // 中速：平缓的开始
+                    easingFunction = 'cubic-bezier(0.2, 0.1, 0.3, 1)';
+                } else {
+                    // 高速：相对直接的开始
+                    easingFunction = 'cubic-bezier(0.3, 0.1, 0.4, 1)';
+                }
+
+                // 单阶段动画：直接从当前位置旋转到目标位置
+                const totalDuration = spinSpeed + decelerationTime;
+                this.pointer.style.transition = `transform ${totalDuration}s ${easingFunction}`;
+                this.pointer.style.transform = `translateX(-50%) rotate(${targetRotation}deg)`;
+
+                // 更新当前角度
+                this.currentRotation = targetRotation;
+
+                // 动画结束处理
+                setTimeout(() => {
+                    this.pointer.style.transition = '';
+                    this.pointer.style.willChange = 'auto';
+
+                    this.isSpinning = false;
+                    this.showFinalDirection(finalRotation);
+
+                    setTimeout(() => {
+                        this.power = 0;
+                        this.powerFill.style.width = '0%';
+                    }, 2000);
+                }, totalDuration * 1000);
+            }
+
+            getCurrentRotation() {
+                // 直接返回跟踪的角度，避免DOM查询的复杂性
+                return this.currentRotation;
+            }
+
+            showFinalDirection(rotation) {
+                // 计算最终指向的方向
+                const normalizedRotation = rotation % 360;
+                const direction = Math.floor((normalizedRotation + 22.5) / 45) % 8;
+                const directions = ['东', '东北', '北', '西北', '西', '西南', '南', '东南'];
+                
+                // 可以在这里添加显示最终方向的逻辑
+                console.log(`指针指向: ${directions[direction]}`);
+            }
+        }
+
+        // 启动游戏
+        document.addEventListener('DOMContentLoaded', () => {
+            new PointerGame();
+            
+            // 注册 Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js');
+            }
+        });
+    </script>
 </body>
-<div class="navigation-button">
-    <a href="rotating-pointer.html" class="nav-button">
-        转盘
-    </a>
-</div>
-<div id="taskType"></div>
-<div id="taskArea" class="shadow">
-    请选择
-</div>
-<div id="navigation">
-    <button onclick="getNewTask('truth')" id="truth" class="button-19">真心话</button>
-    <button onclick="getNewTask('random')" id="random" class="button-19">随机</button>
-    <button onclick="getNewTask('dare')" id="dare" class="button-19">大冒险</button>
-</div>
-
-<script>
-    if ('serviceworker' in navigator) {
-        navigator.serviceWorker.register('/service-worker.js')
-    }
-</script>
 
 </html>
