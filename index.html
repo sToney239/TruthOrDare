@@ -632,16 +632,20 @@
             }
 
             const usedChallenges = getUsedChallenges();
-            const usedList = usedChallenges[truthOrDare] || [];
             const allChallenges = challenge[truthOrDare];
 
-            // 找出所有未使用的挑战索引
-            const availableIndices = [];
-            for (let i = 0; i < allChallenges.length; i++) {
-                if (!usedList.includes(i)) {
+            // 初始化或获取可用索引数组
+            if (!usedChallenges[truthOrDare + '_available']) {
+                // 首次运行或被重置，创建完整索引数组
+                const availableIndices = [];
+                for (let i = 0; i < allChallenges.length; i++) {
                     availableIndices.push(i);
                 }
+                usedChallenges[truthOrDare + '_available'] = availableIndices;
+                saveUsedChallenges(usedChallenges);
             }
+
+            const availableIndices = usedChallenges[truthOrDare + '_available'];
 
             let selectedChallenge;
             let needReset = false;
@@ -649,23 +653,20 @@
             if (availableIndices.length === 0) {
                 // 所有挑战都已使用，清除记录重新开始
                 console.log(`${truthOrDare === 'truth' ? '真心话' : '大冒险'}所有问题都已使用，重新开始...`);
-                usedChallenges[truthOrDare] = [];
-                saveUsedChallenges(usedChallenges);
-                // 重新获取可用索引
+                // 重新创建完整索引数组
                 for (let i = 0; i < allChallenges.length; i++) {
                     availableIndices.push(i);
                 }
+                saveUsedChallenges(usedChallenges);
                 needReset = true;
             }
 
-            // 从可用索引中随机选择一个
+            // 从可用索引中随机选择一个并移除
             const randomIndex = Math.floor(Math.random() * availableIndices.length);
-            const selectedChallengeIndex = availableIndices[randomIndex];
+            const selectedChallengeIndex = availableIndices.splice(randomIndex, 1)[0];
             selectedChallenge = allChallenges[selectedChallengeIndex];
 
-            // 记录已使用的挑战
-            usedChallenges[truthOrDare] = usedChallenges[truthOrDare] || [];
-            usedChallenges[truthOrDare].push(selectedChallengeIndex);
+            // 保存更新后的可用索引
             saveUsedChallenges(usedChallenges);
 
             // 显示挑战（直接设置，不会有闪烁）
