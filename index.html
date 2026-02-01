@@ -415,6 +415,92 @@
             transform: translateY(3px);
             box-shadow: 0px 0px 0px #F3A934;
         }
+
+        /* 移动端横屏模式优化 */
+        @media screen and (orientation: landscape) and (max-height: 600px) {
+            #navToggle {
+                display: none !important;
+            }
+
+            #truthOrDarePage {
+                padding: 0 30px;
+                justify-content: center;
+            }
+
+            #taskType {
+                display: none !important;
+            }
+
+            #taskArea {
+                width: 95%;
+                height: 90vh;
+                font-size: 15vh;
+                margin: 0 auto;
+                line-height: 1.3;
+                padding: 40px 50px 40px 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+            }
+
+            #navigation {
+                display: none !important;
+            }
+
+            /* 圆形悬浮随机按钮 - 覆盖主区域右下角 */
+            .random-float-button {
+                position: absolute;
+                bottom: 5px;
+                right: 15px;
+                width: 90px;
+                height: 90px;
+                border-radius: 50%;
+                background-color: #838383;
+                color: white;
+                border: solid transparent;
+                border-width: 0 0 4px;
+                box-sizing: border-box;
+                cursor: pointer;
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                font-family: din-round, sans-serif;
+                font-size: 5vh;
+                font-weight: 700;
+                user-select: none;
+                -webkit-user-select: none;
+                transition: filter 0.2s;
+                transform: translateZ(0);
+            }
+
+            .random-float-button:after {
+                background-clip: padding-box;
+                border: solid transparent;
+                border-radius: 50%;
+                border-width: 0 0 4px;
+                bottom: -4px;
+                content: "";
+                left: 0;
+                position: absolute;
+                right: 0;
+                top: 0;
+                z-index: -1;
+                background-color: #2EA44F;
+            }
+
+            .random-float-button:hover {
+                filter: brightness(1.1);
+                -webkit-filter: brightness(1.1);
+            }
+
+            .random-float-button:active {
+                border-width: 4px 0 0;
+                background: none;
+            }
+        }
     </style>
 </head>
 
@@ -437,6 +523,10 @@
             <button onclick="getNewTask('random')" id="random" class="button-19">随机</button>
             <button onclick="getNewTask('dare')" id="dare" class="button-19">大冒险</button>
         </div>
+        <!-- 横屏模式悬浮按钮 -->
+        <button onclick="getNewTask('truth')" id="randomFloatBtn" class="random-float-button" style="display: none;">
+            真心话
+        </button>
     </div>
 
     <!-- 转盘页面 -->
@@ -488,25 +578,101 @@
             }
         });
 
+        // 检测横屏模式并切换按钮显示
+        function checkOrientation() {
+            const isLandscape = window.innerHeight < 600 && window.innerWidth > window.innerHeight;
+            const randomFloatBtn = document.getElementById('randomFloatBtn');
+
+            if (isLandscape) {
+                randomFloatBtn.style.display = 'flex';
+            } else {
+                randomFloatBtn.style.display = 'none';
+            }
+        }
+
+        // 监听屏幕方向变化
+        window.addEventListener('resize', checkOrientation);
+        window.addEventListener('orientationchange', checkOrientation);
+
+        // 初始检查
+        checkOrientation();
+
         // 真心话大冒险功能
-        
+
+        // 初始化 localStorage
+        const STORAGE_KEY = 'tod_used_challenges';
+
+        function getUsedChallenges() {
+            const used = localStorage.getItem(STORAGE_KEY);
+            if (!used) {
+                return { truth: [], dare: [] };
+            }
+            try {
+                return JSON.parse(used);
+            } catch (e) {
+                return { truth: [], dare: [] };
+            }
+        }
+
+        function saveUsedChallenges(used) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(used));
+        }
 
         function getNewTask(truthOrDare) {
+            // 检测是否为横屏模式
+            const isLandscape = window.innerHeight < 600 && window.innerWidth > window.innerHeight;
+
             if (truthOrDare === 'random') {
-                truthOrDare = ['truth', 'dare'][Math.floor(Math.random() * 2)];
-            }
-            if (truthOrDare === 'truth') {
-                document.getElementById('taskArea').innerHTML = challenge.truth[Math.floor(Math.random() * challenge.truth.length)];
-                document.getElementById('taskType').innerHTML = '真心话'
-                // document.getElementById('taskType').style.background = '#9bdfffff'
-                // document.getElementById('taskType').style.boxShadow = '0px 2px 0px #838383'
-            } else {
-                document.getElementById('taskArea').innerHTML = challenge.dare[Math.floor(Math.random() * challenge.dare.length)];
-                document.getElementById('taskType').innerHTML = '大冒险'
-                // document.getElementById('taskType').style.background = '#ffc7a2ff'
-                // document.getElementById('taskType').style.boxShadow = '0px 2px 0px #838383'
+                // 横屏模式下，随机按钮只选择真心话
+                if (isLandscape) {
+                    truthOrDare = 'truth';
+                } else {
+                    truthOrDare = ['truth', 'dare'][Math.floor(Math.random() * 2)];
+                }
             }
 
+            const usedChallenges = getUsedChallenges();
+            const usedList = usedChallenges[truthOrDare] || [];
+            const allChallenges = challenge[truthOrDare];
+
+            // 找出所有未使用的挑战索引
+            const availableIndices = [];
+            for (let i = 0; i < allChallenges.length; i++) {
+                if (!usedList.includes(i)) {
+                    availableIndices.push(i);
+                }
+            }
+
+            let selectedChallenge;
+            let needReset = false;
+
+            if (availableIndices.length === 0) {
+                // 所有挑战都已使用，清除记录重新开始
+                console.log(`${truthOrDare === 'truth' ? '真心话' : '大冒险'}所有问题都已使用，重新开始...`);
+                usedChallenges[truthOrDare] = [];
+                saveUsedChallenges(usedChallenges);
+                // 重新获取可用索引
+                for (let i = 0; i < allChallenges.length; i++) {
+                    availableIndices.push(i);
+                }
+                needReset = true;
+            }
+
+            // 从可用索引中随机选择一个
+            const randomIndex = Math.floor(Math.random() * availableIndices.length);
+            const selectedChallengeIndex = availableIndices[randomIndex];
+            selectedChallenge = allChallenges[selectedChallengeIndex];
+
+            // 记录已使用的挑战
+            usedChallenges[truthOrDare] = usedChallenges[truthOrDare] || [];
+            usedChallenges[truthOrDare].push(selectedChallengeIndex);
+            saveUsedChallenges(usedChallenges);
+
+            // 显示挑战（直接设置，不会有闪烁）
+            document.getElementById('taskArea').innerHTML = selectedChallenge;
+            document.getElementById('taskType').innerHTML = truthOrDare === 'truth' ? '真心话' : '大冒险';
+
+            console.log(`剩余${truthOrDare === 'truth' ? '真心话' : '大冒险'}: ${availableIndices.length - 1}/${allChallenges.length}${needReset ? ' (已重置)' : ''}`);
         }
 
         // 转盘功能
